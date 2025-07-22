@@ -1,61 +1,96 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 function App() {
-  const [connectionStatus, setConnectionStatus] = useState('');
-  const [temperature, setTemperature] = useState(null);
+  const [connected, setConnected] = useState(false);
+  const [data, setData] = useState([]);
+  const [device, setDevice] = useState(null);
+  const [error, setError] = useState("");
+
+  const SERVICE_UUID = "12345678-1234-5678-1234-56789abcdef0";
+  const CHARACTERISTIC_UUID = "abcdef01-1234-5678-1234-56789abcdef0";
+
+  const labels = [
+    "⏱ Temps (ms)",
+    "💓 BPM",
+    "🌡 Température (°C)",
+    "💧 Humidité (%)",
+    "📈 AccX (BMI)",
+    "📈 AccY (BMI)",
+    "📈 AccZ (BMI)",
+    "🌀 GyroX (BMI)",
+    "🌀 GyroY (BMI)",
+    "🌀 GyroZ (BMI)",
+    "📈 AccX (MPU)",
+    "📈 AccY (MPU)",
+    "📈 AccZ (MPU)",
+    "🌀 GyroX (MPU)",
+    "🌀 GyroY (MPU)",
+    "🌀 GyroZ (MPU)",
+  ];
 
   const connectToNano = async () => {
-    setConnectionStatus('Connexion en cours...');
-
     try {
       const device = await navigator.bluetooth.requestDevice({
-        filters: [{ name: 'Nano33BLESense' }],
-        optionalServices: ['00001234-0000-1000-8000-00805f9b34fb']  // Ajoute l'UUID du service ici
+        filters: [{ namePrefix: "Nano" }],
+        optionalServices: [SERVICE_UUID]
       });
 
+      setDevice(device);
+
       const server = await device.gatt.connect();
-      console.log('✅ Connecté à', device.name);
+      const service = await server.getPrimaryService(SERVICE_UUID);
+      const characteristic = await service.getCharacteristic(CHARACTERISTIC_UUID);
 
-      // Mettre à jour le statut de la connexion
-      setConnectionStatus(`Connecté à ${device.name}`);
+      await characteristic.startNotifications();
 
-      // Récupérer le service et la caractéristique avec l'UUID correct
-      const service = await server.getPrimaryService('00001234-0000-1000-8000-00805f9b34fb'); // UUID complet du service
-      const characteristic = await service.getCharacteristic('00005678-0000-1000-8000-00805f9b34fb');  // UUID complet de la caractéristique
-      await characteristic.startNotifications();  // Démarrer les notifications
+      characteristic.addEventListener("characteristicvaluechanged", (event) => {
+        const buffer = event.target.value.buffer;
+        const dataView = new DataView(buffer);
 
-      // Écouter les notifications de la caractéristique
-      characteristic.addEventListener('characteristicvaluechanged', handleCharacteristicValueChanged);
+        const floats = [];
+        for (let i = 0; i < 16; i++) {
+          floats.push(dataView.getFloat32(i * 4, true)); // little endian
+        }
 
+        setData(floats);
+      });
+
+      setConnected(true);
+      setError("");
     } catch (err) {
-      console.error('❌ Erreur de connexion BLE :', err);
-      setConnectionStatus('Erreur de connexion');
+      console.error("❌ Erreur de connexion BLE :", err);
+      setError("Erreur BLE : " + err.message);
+      setConnected(false);
     }
   };
 
-  // Fonction de gestion des notifications
-  const handleCharacteristicValueChanged = (event) => {
-    const value = event.target.value;
-    const receivedData = new TextDecoder().decode(value); // Décoder les données reçues
-    console.log('Données reçues:', receivedData);
-
-    // Extraire la température de la chaîne de données
-    const dataParts = receivedData.split(',');
-    const temp = dataParts[1];  // Température est la deuxième valeur
-
-    setTemperature(temp);  // Mettre à jour l'état de la température
-  };
-
   return (
-    <div className="App">
-      <h1>Connexion à la Nano 33 BLE Sense</h1>
-      <button onClick={connectToNano}>🔗 Se connecter à la carte</button>
+    <div style={{ fontFamily: "sans-serif", padding: "2rem" }}>
+      <h1>💓 NanoSense+ Web BLE</h1>
 
-      {/* Affichage du statut de la connexion */}
-      {connectionStatus && <p>{connectionStatus}</p>}
+      {!connected ? (
+        <button onClick={connectToNano}>🔌 Se connecter à la carte</button>
+      ) : (
+        <p>✅ Connecté à {device?.name || "la carte"} !</p>
+      )}
 
-      {/* Affichage de la température reçue */}
-      {temperature !== null && <p>Température reçue : {temperature}°C</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      {data.length === 16 && (
+        <div style={{ marginTop: "2rem" }}>
+          <h2>📊 Données reçues (affichage vertical)</h2>
+          <table border="1" cellPadding="6" style={{ borderCollapse: "collapse" }}>
+            <tbody>
+              {data.map((val, idx) => (
+                <tr key={idx}>
+                  <td><strong>{labels[idx]}</strong></td>
+                  <td>{val.toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
