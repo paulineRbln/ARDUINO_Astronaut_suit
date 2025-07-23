@@ -1,0 +1,26 @@
+/* Style pour le conteneur principal du bouton de menu */
+.menu-button {
+  background-color: #ffffff; /* Couleur de fond des boutons */
+  cursor: pointer;
+  display: flex;
+  color: #C5C7CC;
+  flex-direction: column; /* Positionne l'icône au-dessus du texte */
+  align-items: center; /* Centre les éléments horizontalement */
+}
+
+/* Style pour le bouton de menu au survol */
+.menu-button:hover {
+  color: #EBACAC; /* Change la couleur du texte au survol */
+}
+
+/* Style pour l'icône dans le bouton de menu */
+.menu-icon {
+  margin-bottom: 8px; /* Espacement vertical entre l'icône et le texte */
+  font-size: 120%;
+}
+
+/* Style pour le texte dans le bouton de menu */
+.menu-button span {
+  text-align: center; /* Assure que le texte est bien centré sous l'icône */
+  font-size: 80%;
+}

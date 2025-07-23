@@ -1,0 +1,22 @@
+.bouton-connexion {
+  background-color: #007bff; /* Bleu par défaut */
+  color: white;
+  border: none;
+  padding: 14px 24px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.bouton-connexion.connected {
+  background-color: #28a745; /* Vert pour connecté */
+}
+
+.bouton-connexion.error {
+  background-color: #dc3545; /* Rouge pour erreur */
+}
+
+.bouton-connexion:hover {
+  filter: brightness(0.95);
+}
