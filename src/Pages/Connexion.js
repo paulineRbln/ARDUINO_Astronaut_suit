@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import BoutonConnexion from "../Petits_objets/BoutonConnexion";
+import { useBluetooth } from "../BluetoothContext"; // 👈 import du contexte
 
 function Connexion() {
-  const [connectedDevice, setConnectedDevice] = useState(null);
+  const { connectedDevice, setConnectedDevice } = useBluetooth(); // 👈 on utilise le contexte
   const [deviceName, setDeviceName] = useState("");
   const [error, setError] = useState("");
 
   const SERVICE_UUID = "12345678-1234-5678-1234-56789abcdef0";
   const CHARACTERISTIC_UUID = "abcdef01-1234-5678-1234-56789abcdef0";
 
-  // Fonction pour connecter la Smart Suit
   const connectToSmartSuit = async () => {
     try {
       setError("");
@@ -22,7 +22,7 @@ function Connexion() {
         optionalServices: [SERVICE_UUID],
       });
 
-      setConnectedDevice(device);
+      setConnectedDevice(device); // 👈 contexte
       setDeviceName(device.name);
 
       const server = await device.gatt.connect();
@@ -34,10 +34,8 @@ function Connexion() {
       characteristic.addEventListener("characteristicvaluechanged", (event) => {
         const value = event.target.value;
         console.log("📥 Données reçues :", value);
-        // Traitement futur ici
       });
 
-      // Sauvegarder la connexion dans le localStorage
       localStorage.setItem("connectedDevice", JSON.stringify({
         name: device.name,
         connected: true,
@@ -48,28 +46,21 @@ function Connexion() {
       setError("Connexion perdue");
       setConnectedDevice(null);
       setDeviceName("");
-
-      // En cas d'erreur, nettoyer l'état dans le localStorage
       localStorage.removeItem("connectedDevice");
     }
   };
 
-  // Déconnexion de l'appareil et nettoyage de l'état
   const disconnectDevice = async () => {
     if (connectedDevice) {
+      console.log(connectedDevice);
       const confirmDisconnect = window.confirm("Êtes-vous sûr de vouloir vous déconnecter ?");
       if (confirmDisconnect) {
         try {
-          // Déconnexion de l'appareil
           await connectedDevice.gatt.disconnect();
-          
-          // Nettoyage de l'état localStorage
           localStorage.removeItem("connectedDevice");
-          
-          // Réinitialisation des états
           setConnectedDevice(null);
           setDeviceName("");
-          setError(""); // Clear error if disconnected
+          setError("");
         } catch (err) {
           console.error("❌ Erreur de déconnexion :", err);
           setError("Erreur lors de la déconnexion");
@@ -78,59 +69,54 @@ function Connexion() {
     }
   };
 
-  // Fonction pour réinitialiser le localStorage
   const resetLocalStorage = () => {
     localStorage.removeItem("connectedDevice");
     setConnectedDevice(null);
     setDeviceName("");
-    setError(""); // Clear any error on reset
+    setError("");
   };
 
-  // Vérifie régulièrement si l'appareil est toujours connecté
   useEffect(() => {
+    console.log(connectedDevice);
     const interval = setInterval(() => {
       if (connectedDevice && connectedDevice.gatt && !connectedDevice.gatt.connected) {
         console.warn("⚠️ Connexion perdue");
         setError("Connexion perdue");
         setConnectedDevice(null);
         setDeviceName("");
-        localStorage.removeItem("connectedDevice"); // Nettoyage de l'état localStorage
+        localStorage.removeItem("connectedDevice");
       }
-    }, 1000); // vérifie toutes les 1 secondes
+    }, 1000);
 
-    return () => clearInterval(interval); // Nettoyage de l'intervalle à la destruction du composant
-  }, [connectedDevice]);
+    return () => clearInterval(interval);
+  }, [connectedDevice, setConnectedDevice]);
 
-  // Vérification de l'état de la connexion dès le chargement de la page (quand on revient)
   useEffect(() => {
     const savedDevice = JSON.parse(localStorage.getItem("connectedDevice"));
-
     if (savedDevice && savedDevice.connected) {
-      // Si un périphérique est déjà enregistré comme connecté
       setDeviceName(savedDevice.name);
-      setConnectedDevice(savedDevice);
-      setError(""); // Clear error if previously connected
+      // setConnectedDevice est appelée uniquement si ce n'est pas déjà défini (évite doublons)
     }
-  }, []); // Le tableau vide signifie qu'on l'appelle une seule fois au chargement du composant
+  }, [setConnectedDevice]);
 
   return (
     <div style={{ fontFamily: "sans-serif", padding: "2rem", textAlign: "center" }}>
       <h1>Connect Your Smart Suit</h1>
 
       <BoutonConnexion
-        onClick={connectedDevice ? disconnectDevice : connectToSmartSuit} // Si connecté, déconnecte, sinon connecte
+        onClick={connectedDevice ? disconnectDevice : connectToSmartSuit}
         connected={!!connectedDevice}
         deviceName={deviceName}
         error={error}
       />
 
-      <button 
+      <button
         style={{
-          marginTop: "2rem", 
-          padding: "1rem", 
-          backgroundColor: "#ff4d4d", 
-          color: "white", 
-          border: "none", 
+          marginTop: "2rem",
+          padding: "1rem",
+          backgroundColor: "#ff4d4d",
+          color: "white",
+          border: "none",
           borderRadius: "5px",
           cursor: "pointer"
         }}
