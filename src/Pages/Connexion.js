@@ -69,13 +69,6 @@ function Connexion() {
     }
   };
 
-  const resetLocalStorage = () => {
-    localStorage.removeItem("connectedDevice");
-    setConnectedDevice(null);
-    setDeviceName("");
-    setError("");
-  };
-
   useEffect(() => {
     console.log(connectedDevice);
     const interval = setInterval(() => {
@@ -110,20 +103,6 @@ function Connexion() {
         error={error}
       />
 
-      <button
-        style={{
-          marginTop: "2rem",
-          padding: "1rem",
-          backgroundColor: "#ff4d4d",
-          color: "white",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer"
-        }}
-        onClick={resetLocalStorage}
-      >
-        Reset
-      </button>
     </div>
   );
 }
