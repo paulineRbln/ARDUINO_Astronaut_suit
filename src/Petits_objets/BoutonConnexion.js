@@ -3,9 +3,9 @@ import "./BoutonConnexion.css";
 
 function BoutonConnexion({ onClick, connected, deviceName, error }) {
   const getButtonText = () => {
-    if (error) return "❌ Connexion perdue";
-    if (connected) return `✅ Connecté à ${deviceName}`;
-    return "🔌 Connecter ma Smart Suit";
+    if (error) return "❌ Connection lost";
+    if (connected) return `✅ Connected to ${deviceName}`;
+    return "🔌 Connect my Smart Suit";
   };
 
   const className = `bouton-connexion${error ? " error" : connected ? " connected" : ""}`;
