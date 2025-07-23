@@ -1,0 +1,10 @@
+.connexion-container {
+  font-family: sans-serif;
+  padding: 5vw;
+  text-align: center;
+}
+
+.connexion-container h1 {
+    font-size: 10vw;
+    color: rgb(55, 55, 55);
+}

@@ -1,20 +1,20 @@
 .bouton-connexion {
-  background-color: #007bff; /* Bleu par défaut */
+  background-color: #00ccff; /* Bleu par défaut */
   color: white;
   border: none;
   padding: 14px 24px;
-  font-size: 16px;
-  border-radius: 8px;
+  font-size: 5vw;
+  border-radius: 100px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 .bouton-connexion.connected {
-  background-color: #28a745; /* Vert pour connecté */
+  background-color: #75e55e; /* Vert pour connecté */
 }
 
 .bouton-connexion.error {
-  background-color: #dc3545; /* Rouge pour erreur */
+  background-color: #ec4e5e; /* Rouge pour erreur */
 }
 
 .bouton-connexion:hover {

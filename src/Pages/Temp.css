@@ -1,0 +1,28 @@
+.temp-container {
+  text-align: center;
+  margin-top: 50px;
+  font-size: 1rem;
+}
+
+.temperature-chart, .humidity-chart {
+  height: 20vh;  /* Set the height of both charts to 40% of the viewport height */
+  width: 80%;  /* Keep the width at 80% to take more space */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.temperature-text, .humidity-text {
+  font-size: 1.4rem;
+  margin-top: 20px;
+  font-weight: bold;
+}
+
+.temperature-text {
+  color: rgb(75, 192, 192);  /* Temperature color (green/blue) */
+  margin-top: 5vh;  /* Set a relative margin based on viewport height */
+}
+
+.humidity-text {
+  color: rgb(0, 0, 128);  /* Humidity color (dark blue) */
+  margin-top: 5vh;  /* Set a relative margin for humidity */
+}
