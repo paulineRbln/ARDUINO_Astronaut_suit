@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useBluetooth } from "../BluetoothContext"; // Import the context to access data
-import { Line } from 'react-chartjs-2'; // Import the Chart.js component
+import { useBluetooth } from "../BluetoothContext";
+import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend } from 'chart.js';
-import './Temp.css'; // Import the CSS file specific to the page
+import './Temp.css';
 
-// Register necessary components from Chart.js
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -16,88 +15,88 @@ ChartJS.register(
 );
 
 function Temp() {
-  const { sensorData } = useBluetooth(); // Get the data from context (including temperature and humidity)
-  const [temperatureHistory, setTemperatureHistory] = useState([]); // Temperature history
-  const [humidityHistory, setHumidityHistory] = useState([]); // Humidity history
-  const [timeHistory, setTimeHistory] = useState([]); // Time history
+  const { sensorData } = useBluetooth();
 
-  // Define the time window (in number of data points)
-  const TIME_WINDOW = 30; // This value can be easily changed to enlarge or reduce the window
+  const [temperatureHistory, setTemperatureHistory] = useState([]);
+  const [humidityHistory, setHumidityHistory] = useState([]);
+  const [timeHistory, setTimeHistory] = useState([]);
 
-  // Effect to update history each time new data is received
+  const TIME_WINDOW = 30;     // Nb de points visibles (15s si 1 point/500ms)
+  const MAX_HISTORY = 300;    // Nb total de points gardés (2m30 de données)
+
   useEffect(() => {
     if (sensorData && sensorData[3] !== null && sensorData[4] !== null) {
       const currentTime = new Date().toLocaleTimeString();
 
-      // Add new temperature, humidity, and time to the history
-      setTemperatureHistory(prevHistory => [...prevHistory, sensorData[3]]);
-      setHumidityHistory(prevHistory => [...prevHistory, sensorData[4]]);
-      setTimeHistory(prevHistory => [...prevHistory, currentTime]);
+      setTemperatureHistory(prev => {
+        const updated = [...prev, sensorData[3]];
+        return updated.length > MAX_HISTORY ? updated.slice(-MAX_HISTORY) : updated;
+      });
+
+      setHumidityHistory(prev => {
+        const updated = [...prev, sensorData[4]];
+        return updated.length > MAX_HISTORY ? updated.slice(-MAX_HISTORY) : updated;
+      });
+
+      setTimeHistory(prev => {
+        const updated = [...prev, currentTime];
+        return updated.length > MAX_HISTORY ? updated.slice(-MAX_HISTORY) : updated;
+      });
     }
   }, [sensorData]);
 
-  // Effect to limit the history to the defined time window
-  useEffect(() => {
-    if (temperatureHistory.length > TIME_WINDOW) {
-      setTemperatureHistory(prevHistory => prevHistory.slice(1));  // Remove the first element if the size exceeds TIME_WINDOW
-      setHumidityHistory(prevHistory => prevHistory.slice(1));  // Remove the first element of humidityHistory as well
-      setTimeHistory(prevHistory => prevHistory.slice(1));  // Remove the first element of timeHistory
-    }
-  }, [temperatureHistory.length, humidityHistory.length]); // Added both history arrays in the dependencies
+  const startIndex = Math.max(0, timeHistory.length - TIME_WINDOW);
+  const visibleLabels = timeHistory.slice(startIndex);
+  const visibleTemperature = temperatureHistory.slice(startIndex);
+  const visibleHumidity = humidityHistory.slice(startIndex);
 
-  // Calculate min and max temperature and humidity for dynamic Y-axis scaling
-  const minTemp = Math.min(...temperatureHistory);
-  const maxTemp = Math.max(...temperatureHistory);
-  const minHumidity = Math.min(...humidityHistory);
-  const maxHumidity = Math.max(...humidityHistory);
+  const minTemp = Math.min(...visibleTemperature);
+  const maxTemp = Math.max(...visibleTemperature);
+  const minHumidity = Math.min(...visibleHumidity);
+  const maxHumidity = Math.max(...visibleHumidity);
 
-  // Data for the temperature and humidity charts
   const dataTemp = {
-    labels: timeHistory, // Labels representing the time of data
-    datasets: [
-      {
-        label: 'Temperature (°C)',
-        data: temperatureHistory, // Temperatures for the chart
-        borderColor: 'rgba(75,192,192,1)', // Line color for temperature
-        backgroundColor: 'rgba(75,192,192,0.2)', // Fill color for temperature
-        fill: true, // Fill the area under the line
-        tension: 0.4, // Smooth the line
-        pointRadius: 0, // No visible points on the line
-      }
-    ]
+    labels: visibleLabels,
+    datasets: [{
+      label: 'Temperature (°C)',
+      data: visibleTemperature,
+      borderColor: 'rgba(75,192,192,1)',
+      backgroundColor: 'rgba(75,192,192,0.2)',
+      fill: true,
+      tension: 0.4,
+      pointRadius: 0,
+    }]
   };
 
   const dataHumidity = {
-    labels: timeHistory, // Labels representing the time of data
-    datasets: [
-      {
-        label: 'Humidity (%)',
-        data: humidityHistory, // Humidity for the chart
-        borderColor: 'rgba(0,0,128,1)', // Dark blue line color for humidity
-        backgroundColor: 'rgba(0,0,128,0.2)', // Fill color for humidity
-        fill: true, // Fill the area under the line
-        tension: 0.4, // Smooth the line
-        pointRadius: 0, // No visible points on the line
-      }
-    ]
+    labels: visibleLabels,
+    datasets: [{
+      label: 'Humidity (%)',
+      data: visibleHumidity,
+      borderColor: 'rgba(0,0,128,1)',
+      backgroundColor: 'rgba(0,0,128,0.2)',
+      fill: true,
+      tension: 0.4,
+      pointRadius: 0,
+    }]
   };
 
-  // Options for the temperature and humidity charts
   const options = {
     responsive: true,
+    animation: false,
     scales: {
       x: {
         type: 'category',
         ticks: {
           autoSkip: true,
-          maxTicksLimit: TIME_WINDOW, // Limit the number of ticks based on the time window
+          maxTicksLimit: TIME_WINDOW,
         },
       },
       y: {
-        min: minTemp - 1,  // Set the lower margin for the min value
-        max: maxTemp + 1,  // Set the upper margin for the max value
+        min: minTemp - 1,
+        max: maxTemp + 1,
         ticks: {
-          stepSize: 1, // Interval for ticks on the Y-axis
+          stepSize: 1,
         },
       },
     },
@@ -105,19 +104,20 @@ function Temp() {
 
   const optionsHumidity = {
     responsive: true,
+    animation: false,
     scales: {
       x: {
         type: 'category',
         ticks: {
           autoSkip: true,
-          maxTicksLimit: TIME_WINDOW, // Limit the number of ticks based on the time window
+          maxTicksLimit: TIME_WINDOW,
         },
       },
       y: {
-        min: minHumidity - 1,  // Set the lower margin for the min humidity value
-        max: maxHumidity + 1,  // Set the upper margin for the max humidity value
+        min: minHumidity - 1,
+        max: maxHumidity + 1,
         ticks: {
-          stepSize: 1, // Interval for ticks on the Y-axis
+          stepSize: 1,
         },
       },
     },
@@ -129,38 +129,28 @@ function Temp() {
 
   return (
     <div className="temp-container">
-      <h1> 🫁🌡️ Metabolism </h1>
+      <h1>🫁🌡️ Metabolism</h1>
 
-      {/* Displaying the temperature */}
       <div className="temperature-text">
         {sensorData[3] !== null ? (
-          <>
-            <div>Temperature: {sensorData[3]} °C</div>
-          </>
+          <div>Temperature: {sensorData[3]} °C</div>
         ) : (
           <p>Waiting for temperature data...</p>
         )}
       </div>
 
-      
-
-      {/* Displaying the temperature chart */}
       <div className="temperature-chart">
         <Line data={dataTemp} options={options} />
       </div>
 
-    {/* Displaying the humidity */}
       <div className="humidity-text">
         {sensorData[4] !== null ? (
-          <>
-            <div>Humidity: {sensorData[4]} %</div>
-          </>
+          <div>Humidity: {sensorData[4]} %</div>
         ) : (
           <p>Waiting for humidity data...</p>
         )}
       </div>
 
-      {/* Displaying the humidity chart */}
       <div className="humidity-chart">
         <Line data={dataHumidity} options={optionsHumidity} />
       </div>
