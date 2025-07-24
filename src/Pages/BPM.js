@@ -12,7 +12,7 @@ import {
   Filler,
   Legend
 } from 'chart.js';
-import './Temp.css';
+import './Temp.css';  // On réutilise le CSS global pour garder la cohérence
 
 ChartJS.register(
   CategoryScale,
@@ -20,8 +20,8 @@ ChartJS.register(
   LineElement,
   PointElement,
   Title,
-  Filler,
   Tooltip,
+  Filler,
   Legend
 );
 
@@ -62,13 +62,13 @@ function BPM() {
     labels: visibleLabels,
     datasets: [
       {
-        label: 'BPM',
+        label: 'Heart Rate (BPM)',
         data: visibleBPM,
         borderColor: '#d00000',
         backgroundColor: 'rgba(208, 0, 0, 0.2)',
         fill: true,
         tension: 0.4,
-        pointRadius: 2,
+        pointRadius: 0,
       }
     ]
   };
@@ -96,11 +96,11 @@ function BPM() {
 
   return (
     <div className="temp-container">
-      <h1>❤️ Heart Rate</h1>
+      <h1>❤️Heart Rate</h1>
 
-      <div className="bpm-text">
+      <div className="temperature-text" style={{ color: '#d00000' }}>
         {bpmHistory.length ? (
-          <div><strong>BPM: {bpmHistory[bpmHistory.length - 1]} bpm</strong></div>
+          <div>BPM: {bpmHistory[bpmHistory.length - 1]} bpm</div>
         ) : (
           <p>Waiting for BPM data...</p>
         )}

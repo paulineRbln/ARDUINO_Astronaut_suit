@@ -130,7 +130,7 @@ function Temp() {
 
   return (
     <div className="temp-container">
-      <h1>🫁🌡️ Metabolism</h1>
+      <h1>🫁🌡️Metabolism</h1>
 
       <div className="temperature-text">
         {sensorData[3] !== null ? (

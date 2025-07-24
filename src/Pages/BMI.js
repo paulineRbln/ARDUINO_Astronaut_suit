@@ -176,7 +176,7 @@ function BMI() {
 
   return (
     <div className="temp-container">
-      <h1>🚶‍♀️ Central IMU</h1>
+      <h1>🚶‍♀️Central IMU</h1>
 
       <h2>📈 Accelerometer</h2>
       <div className="temperature-chart">

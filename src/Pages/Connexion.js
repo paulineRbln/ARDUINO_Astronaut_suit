@@ -145,7 +145,7 @@ function Connexion() {
 
   return (
     <div className="connexion-container">
-      <h1>Welcome to your SmartSuit app</h1>
+      <h1>👩‍🚀SmartSuit</h1>
 
       <BoutonConnexion
         onClick={connectedDevice ? disconnectDevice : connectToSmartSuit}
@@ -161,15 +161,31 @@ function Connexion() {
             {recording ? "🛑 Stop Record" : "🎬 Start Record"}
           </button>
 
+          {/* Affichage du message avant l'enregistrement */}
+          {!recording && (
+            <div>
+              <p className="info-text">
+                The file will be available in your files once the recording is finished.
+              </p>
+            </div>
+          )}
+
+          {/* Affichage du message quand l'enregistrement est en cours */}
           {recording && (
-            <p style={{ color: "green", marginTop: "1em" }}>
-              ⏺ Enregistrement en cours… {recordedData.length} lignes
-            </p>
+            <div>
+              <p style={{ color: "green", marginTop: "1em" }}>
+                ⏺ Recording in progress… {recordedData.length} lines
+              </p>
+              <p className="info-text">
+                Please stay on this page for the recording to be valid.
+              </p>
+            </div>
           )}
         </div>
       )}
     </div>
   );
+
 }
 
 export default Connexion;

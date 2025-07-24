@@ -1,16 +1,12 @@
 .files-container {
   width: 80vw;
-  margin: 8vh auto;
+  margin: 10px auto;
   padding: 2vh 2vw;
   text-align: center;
   font-family: 'Segoe UI', sans-serif;
+  font-size: 1rem;
 }
 
-.files-title {
-  font-size: 5vw;
-  margin-bottom: 4vh;
-  color: #222;
-}
 
 .empty-message {
   font-size: 4vw;
