@@ -4,12 +4,13 @@
   padding: 20px;
 }
 
-.bpm-text {
-  font-size: 1rem;
-  margin: 20px 0;
-}
 
 .bpm-chart {
   width: 80%;
   height: 1rem;
+}
+
+.bpm-container .bpm-text{
+  color: #d00000;  /* Humidity color (dark blue) */
+  margin-top: 5vh;  /* Set a relative margin for humidity */
 }

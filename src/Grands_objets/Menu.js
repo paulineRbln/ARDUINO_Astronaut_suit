@@ -26,13 +26,13 @@ const Menu = () => {
       />
       <BoutonMenu 
         icon={<GiBodyHeight />} 
-        text="BMI" 
+        text="IMU" 
         lien="/bmi" 
         color={isActive('/bmi')} 
       />
       <BoutonMenu 
         icon={<MdSensors />} 
-        text="IMU" 
+        text="IMU_ext" 
         lien="/imu" 
         color={isActive('/imu')} 
       />

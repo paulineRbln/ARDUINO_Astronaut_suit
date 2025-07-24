@@ -9,24 +9,24 @@ import {
   PointElement,
   Title,
   Tooltip,
+  Filler,
   Legend
 } from 'chart.js';
-import './Temp.css'; // Tu peux renommer Temp.css si tu veux un style séparé
+import './Temp.css';
 
-// === Enregistrement des composants Chart.js ===
 ChartJS.register(
   CategoryScale,
   LinearScale,
   LineElement,
   PointElement,
   Title,
+  Filler,
   Tooltip,
   Legend
 );
 
-// === Constantes ===
-const TIME_WINDOW = 30;       // Nombre de points affichés (glissants)
-const MAX_HISTORY = 300;      // Nombre total de points conservés (2m30 si 1 point/500ms)
+const TIME_WINDOW = 30;
+const MAX_HISTORY = 300;
 
 function BPM() {
   const { sensorData } = useBluetooth();
@@ -34,7 +34,6 @@ function BPM() {
   const [bpmHistory, setBpmHistory] = useState([]);
   const [timeHistory, setTimeHistory] = useState([]);
 
-  // === Mettre à jour les historiques ===
   useEffect(() => {
     if (sensorData && sensorData[17] !== null && !isNaN(sensorData[17])) {
       const bpm = parseFloat(sensorData[17]);
@@ -52,7 +51,6 @@ function BPM() {
     }
   }, [sensorData]);
 
-  // === Préparer la fenêtre glissante ===
   const startIndex = Math.max(0, timeHistory.length - TIME_WINDOW);
   const visibleLabels = timeHistory.slice(startIndex);
   const visibleBPM = bpmHistory.slice(startIndex);
@@ -98,13 +96,13 @@ function BPM() {
 
   return (
     <div className="temp-container">
-      <h1>❤️ Fréquence Cardiaque</h1>
+      <h1>❤️ Heart Rate</h1>
 
-      <div className="temperature-text">
+      <div className="bpm-text">
         {bpmHistory.length ? (
-          <div><strong>BPM : {bpmHistory[bpmHistory.length - 1]} bpm</strong></div>
+          <div><strong>BPM: {bpmHistory[bpmHistory.length - 1]} bpm</strong></div>
         ) : (
-          <p>En attente des données BPM...</p>
+          <p>Waiting for BPM data...</p>
         )}
       </div>
 

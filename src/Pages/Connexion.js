@@ -1,4 +1,3 @@
-// src/pages/Connexion.js
 import React, { useState, useEffect } from "react";
 import BoutonConnexion from "../Petits_objets/BoutonConnexion";
 import { useBluetooth } from "../BluetoothContext";
@@ -84,59 +83,64 @@ function Connexion() {
 
   // --- Enregistrement automatique des données ---
   useEffect(() => {
+    // On enregistre les données uniquement si l'enregistrement est en cours et qu'il y a des nouvelles données
     if (recording && sensorData && sensorData.length > 0) {
       const timestamp = new Date().toISOString();
       const line = [timestamp, ...sensorData];
-      setRecordedData(prev => [...prev, line]);
+      setRecordedData((prev) => [...prev, line]);
+      console.log("📈 Nouvelle donnée ajoutée :", line);
     }
   }, [sensorData, recording]);
 
   const toggleRecording = () => {
     if (recording) {
-      setRecording(false);
+      setRecording(false); // Arrêter l'enregistrement
+
+      // Sauvegarder les données dans localStorage une fois l'enregistrement terminé
+      const date = new Date();
+      const formattedDate = `${date.getDate().toString().padStart(2, '0')}_${(date.getMonth() + 1).toString().padStart(2, '0')}_${date.getFullYear().toString().slice(2)}_${date.getHours().toString().padStart(2, '0')}${date.getMinutes().toString().padStart(2, '0')}${date.getSeconds().toString().padStart(2, '0')}`;
+      const fileName = `DATA_${formattedDate}`;
+
+      const headers = [
+        "Time",
+        "timestamp_ms",
+        "ir_value",
+        "red_value",
+        "temperature_C",
+        "humidity_percent",
+        "accel_bmi270_x",
+        "accel_bmi270_y",
+        "accel_bmi270_z",
+        "gyro_bmi270_x",
+        "gyro_bmi270_y",
+        "gyro_bmi270_z",
+        "accel_mpu6050_x",
+        "accel_mpu6050_y",
+        "accel_mpu6050_z",
+        "gyro_mpu6050_x",
+        "gyro_mpu6050_y",
+        "gyro_mpu6050_z",
+        "bpm"
+      ].join(";");
+
+      const rows = recordedData.map((row) => row.join(";"));
+      const csvContent = [headers, ...rows].join("\n");
+
+      // Sauvegarder dans le localStorage
+      localStorage.setItem(fileName, csvContent);
+
+      // Ajouter à la liste des fichiers enregistrés
+      const fileList = JSON.parse(localStorage.getItem("fileList")) || [];
+      fileList.push(fileName);
+      localStorage.setItem("fileList", JSON.stringify(fileList));
+
+      setRecordedData([]); // Réinitialiser les données après sauvegarde
+      console.log("📂 Données sauvegardées sous le fichier :", fileName);
     } else {
-      setRecordedData([]); // reset avant enregistrement
+      setRecordedData([]); // Réinitialiser les données avant de commencer un nouvel enregistrement
+      console.log("🔴 Démarrage de l'enregistrement");
       setRecording(true);
     }
-  };
-
-  const downloadCSV = () => {
-    if (!recordedData.length) return;
-
-    const headers = [
-      "Time",
-      "timestamp_ms",
-      "ir_value",
-      "red_value",
-      "temperature_C",
-      "humidity_percent",
-      "accel_bmi270_x",
-      "accel_bmi270_y",
-      "accel_bmi270_z",
-      "gyro_bmi270_x",
-      "gyro_bmi270_y",
-      "gyro_bmi270_z",
-      "accel_mpu6050_x",
-      "accel_mpu6050_y",
-      "accel_mpu6050_z",
-      "gyro_mpu6050_x",
-      "gyro_mpu6050_y",
-      "gyro_mpu6050_z",
-      "bpm"
-    ].join(";");
-
-    const rows = recordedData.map(row => row.join(";"));
-    const csvContent = [headers, ...rows].join("\n");
-
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", "smart_data.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
   };
 
   return (
@@ -156,12 +160,6 @@ function Connexion() {
           <button onClick={toggleRecording}>
             {recording ? "🛑 Stop Record" : "🎬 Start Record"}
           </button>
-
-          {!recording && recordedData.length > 0 && (
-            <button onClick={downloadCSV} style={{ marginLeft: "1em" }}>
-              ⬇️ Télécharger CSV
-            </button>
-          )}
 
           {recording && (
             <p style={{ color: "green", marginTop: "1em" }}>

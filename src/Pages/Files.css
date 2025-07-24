@@ -1,0 +1,73 @@
+.files-container {
+  width: 80vw;
+  margin: 8vh auto;
+  padding: 2vh 2vw;
+  text-align: center;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.files-title {
+  font-size: 5vw;
+  margin-bottom: 4vh;
+  color: #222;
+}
+
+.empty-message {
+  font-size: 4vw;
+  color: #777;
+}
+
+.file-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 3vh;
+}
+
+.file-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5vh;
+  margin-bottom: 5vh;
+  font-size: 4vw;
+  color: #333;
+  border-bottom: 0.1vh solid #eee;
+  padding-bottom: 2vh;
+}
+
+.file-name {
+  word-break: break-word;
+  font-weight: 600;
+  font-size: 4.5vw;
+  color: #444;
+  margin-bottom: 1vh;
+}
+
+.button-row {
+  display: flex;
+  justify-content: center;
+  gap: 4vw;
+  width: 100%;
+}
+
+.btn {
+  padding: 2vh 4vw;
+  border: none;
+  border-radius: 1vw;
+  font-size: 4vw;
+  font-weight: bold;
+  cursor: pointer;
+  width: 40%;
+  max-width: 45vw;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.download-btn {
+  background-color: #4c95af;
+  color: white;
+}
+
+.delete-btn {
+  background-color: #e53935;
+  color: white;
+}

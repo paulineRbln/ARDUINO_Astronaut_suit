@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useBluetooth } from "../BluetoothContext";
 import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend } from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend , Filler} from 'chart.js';
 import './Temp.css';
 
 ChartJS.register(
@@ -11,7 +11,8 @@ ChartJS.register(
   PointElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Filler
 );
 
 function Temp() {
