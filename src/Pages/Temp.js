@@ -22,20 +22,20 @@ function Temp() {
   const [humidityHistory, setHumidityHistory] = useState([]);
   const [timeHistory, setTimeHistory] = useState([]);
 
-  const TIME_WINDOW = 30;     // Nb de points visibles (15s si 1 point/500ms)
-  const MAX_HISTORY = 300;    // Nb total de points gardés (2m30 de données)
+  const TIME_WINDOW = 30;
+  const MAX_HISTORY = 300;
 
   useEffect(() => {
-    if (sensorData && sensorData[3] !== null && sensorData[4] !== null) {
+    if (sensorData && sensorData[1] !== null && sensorData[2] !== null) {
       const currentTime = new Date().toLocaleTimeString();
 
       setTemperatureHistory(prev => {
-        const updated = [...prev, sensorData[3]];
+        const updated = [...prev, sensorData[1]];
         return updated.length > MAX_HISTORY ? updated.slice(-MAX_HISTORY) : updated;
       });
 
       setHumidityHistory(prev => {
-        const updated = [...prev, sensorData[4]];
+        const updated = [...prev, sensorData[2]];
         return updated.length > MAX_HISTORY ? updated.slice(-MAX_HISTORY) : updated;
       });
 
@@ -133,8 +133,8 @@ function Temp() {
       <h1>🫁🌡️Metabolism</h1>
 
       <div className="temperature-text">
-        {sensorData[3] !== null ? (
-          <div>Temperature: {sensorData[3]} °C</div>
+        {sensorData[1] !== null ? (
+          <div>Temperature: {sensorData[1]} °C</div>
         ) : (
           <p>Waiting for temperature data...</p>
         )}
@@ -145,8 +145,8 @@ function Temp() {
       </div>
 
       <div className="humidity-text">
-        {sensorData[4] !== null ? (
-          <div>Humidity: {sensorData[4]} %</div>
+        {sensorData[2] !== null ? (
+          <div>Humidity: {sensorData[2]} %</div>
         ) : (
           <p>Waiting for humidity data...</p>
         )}

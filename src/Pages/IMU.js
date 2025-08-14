@@ -40,7 +40,7 @@ function IMU() {
 
   useEffect(() => {
     const handleSensorData = () => {
-      if (sensorData && sensorData.length >= 17) {
+      if (sensorData && sensorData.length >= 15) {
         const currentTime = Date.now();
         if (currentTime - lastUpdate.current >= updateInterval) {
           lastUpdate.current = currentTime;
@@ -49,9 +49,9 @@ function IMU() {
 
           setAccelHistory(prev => {
             const updated = {
-              ax2: [...prev.ax2, parseFloat(sensorData[11])],
-              ay2: [...prev.ay2, parseFloat(sensorData[12])],
-              az2: [...prev.az2, parseFloat(sensorData[13])]
+              ax2: [...prev.ax2, parseFloat(sensorData[9])],
+              ay2: [...prev.ay2, parseFloat(sensorData[10])],
+              az2: [...prev.az2, parseFloat(sensorData[11])]
             };
             return {
               ax2: updated.ax2.slice(-MAX_HISTORY),
@@ -62,9 +62,9 @@ function IMU() {
 
           setGyroHistory(prev => {
             const updated = {
-              gx2: [...prev.gx2, parseFloat(sensorData[14])],
-              gy2: [...prev.gy2, parseFloat(sensorData[15])],
-              gz2: [...prev.gz2, parseFloat(sensorData[16])]
+              gx2: [...prev.gx2, parseFloat(sensorData[12])],
+              gy2: [...prev.gy2, parseFloat(sensorData[13])],
+              gz2: [...prev.gz2, parseFloat(sensorData[14])]
             };
             return {
               gx2: updated.gx2.slice(-MAX_HISTORY),

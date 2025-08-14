@@ -104,8 +104,6 @@ function Connexion() {
       const headers = [
         "Time",
         "timestamp_ms",
-        "ir_value",
-        "red_value",
         "temperature_C",
         "humidity_percent",
         "accel_bmi270_x",

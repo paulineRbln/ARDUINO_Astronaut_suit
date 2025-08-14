@@ -40,7 +40,7 @@ function BMI() {
 
   useEffect(() => {
     const handleSensorData = () => {
-      if (sensorData && sensorData.length >= 11) {
+      if (sensorData && sensorData.length >= 13) {
         const currentTime = Date.now();
         if (currentTime - lastUpdate.current >= updateInterval) {
           lastUpdate.current = currentTime;
@@ -49,9 +49,9 @@ function BMI() {
 
           setAccelHistory(prev => {
             const updated = {
-              ax1: [...prev.ax1, parseFloat(sensorData[5])],
-              ay1: [...prev.ay1, parseFloat(sensorData[6])],
-              az1: [...prev.az1, parseFloat(sensorData[7])]
+              ax1: [...prev.ax1, parseFloat(sensorData[3])],
+              ay1: [...prev.ay1, parseFloat(sensorData[4])],
+              az1: [...prev.az1, parseFloat(sensorData[5])]
             };
             return {
               ax1: updated.ax1.slice(-MAX_HISTORY),
@@ -62,9 +62,9 @@ function BMI() {
 
           setGyroHistory(prev => {
             const updated = {
-              gx1: [...prev.gx1, parseFloat(sensorData[8])],
-              gy1: [...prev.gy1, parseFloat(sensorData[9])],
-              gz1: [...prev.gz1, parseFloat(sensorData[10])]
+              gx1: [...prev.gx1, parseFloat(sensorData[6])],
+              gy1: [...prev.gy1, parseFloat(sensorData[7])],
+              gz1: [...prev.gz1, parseFloat(sensorData[8])]
             };
             return {
               gx1: updated.gx1.slice(-MAX_HISTORY),

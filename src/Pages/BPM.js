@@ -35,8 +35,8 @@ function BPM() {
   const [timeHistory, setTimeHistory] = useState([]);
 
   useEffect(() => {
-    if (sensorData && sensorData[17] !== null && !isNaN(sensorData[17])) {
-      const bpm = parseFloat(sensorData[17]);
+    if (sensorData && sensorData[15] !== null && !isNaN(sensorData[15])) {
+      const bpm = parseFloat(sensorData[15]);
       const time = new Date().toLocaleTimeString();
 
       setBpmHistory(prev => {
